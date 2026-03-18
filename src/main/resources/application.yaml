@@ -1,0 +1,22 @@
+spring:
+
+  application:
+    name:
+      guitar-tracker
+
+  datasource:
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+server:
+  port: 8181
+
+app:
+  jwt:
+    secret-key: ${JWT_SECRET_KEY}
