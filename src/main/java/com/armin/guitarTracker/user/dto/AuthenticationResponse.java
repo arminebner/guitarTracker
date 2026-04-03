@@ -1,4 +1,4 @@
-package com.armin.guitarTracker.User.Service;
+package com.armin.guitarTracker.user.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

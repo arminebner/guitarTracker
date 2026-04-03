@@ -1,10 +1,11 @@
-package com.armin.guitarTracker.User.Service;
+package com.armin.guitarTracker.user.service;
 
-import com.armin.guitarTracker.User.Entities.Role;
-import com.armin.guitarTracker.User.Entities.Token;
-import com.armin.guitarTracker.User.Entities.User;
-import com.armin.guitarTracker.User.Repository.TokenRepository;
-import com.armin.guitarTracker.User.Repository.UserRepository;
+import com.armin.guitarTracker.user.dto.AuthenticationResponse;
+import com.armin.guitarTracker.user.entity.Role;
+import com.armin.guitarTracker.user.entity.Token;
+import com.armin.guitarTracker.user.entity.User;
+import com.armin.guitarTracker.user.repository.TokenRepository;
+import com.armin.guitarTracker.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

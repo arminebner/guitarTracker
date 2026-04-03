@@ -1,4 +1,4 @@
-package com.armin.guitarTracker.User.Entities;
+package com.armin.guitarTracker.user.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;

@@ -1,4 +1,4 @@
-package com.armin.guitarTracker.TrackedProduct.Entities;
+package com.armin.guitarTracker.guitar.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -11,7 +11,7 @@ import java.util.UUID;
 @Getter
 @Entity
 @Table
-public class TrackedGuitar {
+public class Guitar {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

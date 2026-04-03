@@ -1,8 +1,8 @@
-package com.armin.guitarTracker.User.Controller;
+package com.armin.guitarTracker.user.controller;
 
-import com.armin.guitarTracker.User.Entities.User;
-import com.armin.guitarTracker.User.Service.AuthenticationResponse;
-import com.armin.guitarTracker.User.Service.UserService;
+import com.armin.guitarTracker.user.entity.User;
+import com.armin.guitarTracker.user.dto.AuthenticationResponse;
+import com.armin.guitarTracker.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
