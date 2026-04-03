@@ -1,4 +1,4 @@
-package com.armin.guitarTracker.User.Service;
+package com.armin.guitarTracker.user.service;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

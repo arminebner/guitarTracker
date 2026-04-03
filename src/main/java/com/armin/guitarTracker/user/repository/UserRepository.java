@@ -1,6 +1,6 @@
-package com.armin.guitarTracker.User.Repository;
+package com.armin.guitarTracker.user.repository;
 
-import com.armin.guitarTracker.User.Entities.User;
+import com.armin.guitarTracker.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
