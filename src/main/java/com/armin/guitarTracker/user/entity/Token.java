@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+
 @Data
 @Entity
 @Builder
@@ -18,6 +19,9 @@ public class Token {
     private Integer id;
 
     private String token;
+
+    @Enumerated(EnumType.STRING)
+    private TokenType tokenType;
 
     private Boolean isExpired;
 
