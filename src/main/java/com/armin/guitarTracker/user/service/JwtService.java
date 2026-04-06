@@ -19,6 +19,12 @@ public class JwtService {
     @Value("${app.jwt.secret-key}")
     private String secretKey;
 
+    @Value("${app.jwt.access-token-expiration}")
+    private Long accessTokenExpirationDuration;
+
+    @Value("${app.jwt.refresh-token-expiration}")
+    private Long refreshTokenExpirationDuration;
+
     public String extractUserEmail(String jwtToken) {
         return extractClaim(jwtToken, Claims::getSubject);
     }
@@ -28,12 +34,20 @@ public class JwtService {
     }
 
     public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
+        return buildToken(extraClaims, userDetails, accessTokenExpirationDuration);
+    }
+
+    public String generateRefreshToken(UserDetails userDetails) {
+        return buildToken(Map.of(), userDetails, refreshTokenExpirationDuration);
+    }
+
+    private String buildToken(Map<String, Object> extraClaims, UserDetails userDetails, Long expirationDuration) {
         return Jwts
                 .builder()
                 .claims(extraClaims)
                 .subject(userDetails.getUsername())
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24))
+                .expiration(new Date(System.currentTimeMillis() + expirationDuration))
                 .signWith(getSigningKey())
                 .compact();
     }

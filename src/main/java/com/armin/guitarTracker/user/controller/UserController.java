@@ -1,14 +1,17 @@
 package com.armin.guitarTracker.user.controller;
 
-import com.armin.guitarTracker.user.entity.User;
 import com.armin.guitarTracker.user.dto.AuthenticationResponse;
+import com.armin.guitarTracker.user.entity.User;
 import com.armin.guitarTracker.user.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -55,6 +58,26 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(error);
         }
+    }
+
+    @PostMapping("/refresh-token")
+    public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        System.out.println("Received refresh token request");
+        try {
+            service.refreshToken(request, response);
+            System.out.println("Refresh token successful");
+        } catch (AuthenticationException e) {
+            System.out.println("Refresh token failed: " + e.getMessage());
+            e.printStackTrace();
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            response.getWriter().write("Invalid refresh token: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Unexpected error during refresh token: " + e.getMessage());
+            e.printStackTrace();
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            response.getWriter().write("Error refreshing token: " + e.getMessage());
+        }
+
     }
 
     @ExceptionHandler(AuthenticationException.class)

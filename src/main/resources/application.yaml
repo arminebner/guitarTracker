@@ -20,3 +20,5 @@ server:
 app:
   jwt:
     secret-key: ${JWT_SECRET_KEY}
+    access-token-expiration: 60000 # 1 minute in milliseconds
+    refresh-token-expiration: 604800000 # 7 days in milliseconds
