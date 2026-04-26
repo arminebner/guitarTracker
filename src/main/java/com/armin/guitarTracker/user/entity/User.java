@@ -34,6 +34,7 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user")
     // prevents error because of lazy-loading tokens in user entity
     @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private List<Token> tokens;
 
     @Override

@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/products")
@@ -20,8 +19,8 @@ public class ProductController {
     }
 
     @GetMapping
-    public List<Product> getAllByUserId(@RequestParam UUID userId) {
-        return productService.getAllByUserId(userId);
+    public List<Product> getAllByUserId() {
+        return productService.getAllByUserId();
     }
 }
 

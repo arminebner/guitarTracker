@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -18,15 +17,21 @@ public class ProductService {
 
     public Product create(Product product) {
         // TODO safe casting ?
-        User user = (User) Objects.requireNonNull(SecurityContextHolder.getContext()
-                        .getAuthentication())
-                .getPrincipal();
+        User user = getAuthenticatedUser();
         product.setUser(user);
         return repository.save(product);
     }
 
-    public List<Product> getAllByUserId(UUID userId) {
-        return repository.findAllByUserId(userId);
+    public List<Product> getAllByUserId() {
+        User user = getAuthenticatedUser();
+        return repository.findAllByUserId(user.getId());
+    }
+
+    private User getAuthenticatedUser() {
+        // TODO safe casting ?
+        return (User) Objects.requireNonNull(SecurityContextHolder.getContext()
+                        .getAuthentication())
+                .getPrincipal();
     }
 }
 

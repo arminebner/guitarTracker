@@ -4,13 +4,11 @@ import com.armin.guitarTracker.user.entity.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 import java.util.UUID;
 
-@Setter
-@Getter
+@Data
 @Entity
 @Table
 public class Product {
