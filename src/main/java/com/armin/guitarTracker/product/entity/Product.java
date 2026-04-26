@@ -1,5 +1,7 @@
-package com.armin.guitarTracker.guitar.entity;
+package com.armin.guitarTracker.product.entity;
 
+import com.armin.guitarTracker.user.entity.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
@@ -11,7 +13,7 @@ import java.util.UUID;
 @Getter
 @Entity
 @Table
-public class Guitar {
+public class Product {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -24,4 +26,10 @@ public class Guitar {
     @NotBlank
     private String storeName;
 
+    @ManyToOne()
+    @JoinColumn(name = "user_id")
+    // prevents error because of lazy-loading tokens in user entity
+    @JsonIgnore
+    private User user;
 }
+
