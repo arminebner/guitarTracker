@@ -77,7 +77,6 @@ public class UserController {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             response.getWriter().write("Error refreshing token: " + e.getMessage());
         }
-
     }
 
     @ExceptionHandler(AuthenticationException.class)

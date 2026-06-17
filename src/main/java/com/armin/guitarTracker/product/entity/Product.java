@@ -19,15 +19,21 @@ public class Product {
 
     @NotBlank
     private String productUrl;
+
     @NotBlank
     private String title;
+
     @NotBlank
     private String storeName;
+    
+    @NotBlank
+    private String priceSelector;
 
     @ManyToOne()
     @JoinColumn(name = "user_id")
     // prevents error because of lazy-loading tokens in user entity
     @JsonIgnore
     private User user;
+
 }
 
