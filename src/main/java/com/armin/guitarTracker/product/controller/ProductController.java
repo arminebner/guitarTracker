@@ -17,6 +17,7 @@ public class ProductController {
 
     @PostMapping
     public Product create(@RequestBody Product product, @AuthenticationPrincipal User user) {
+        System.out.println("Received request to create product: " + product + " for user: " + user);
         return productService.create(product, user);
     }
 

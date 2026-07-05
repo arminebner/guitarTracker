@@ -8,11 +8,14 @@ import com.armin.guitarTracker.user.entity.User;
 import com.armin.guitarTracker.user.repository.TokenRepository;
 import com.armin.guitarTracker.user.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -24,13 +27,18 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class UserService {
 
+    private static final String REFRESH_TOKEN_COOKIE_NAME = "refresh_token";
+
     private final UserRepository userRepository;
     private final TokenRepository tokenRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
-    public AuthenticationResponse create(User user) {
+    @Value("${app.jwt.refresh-token-expiration}")
+    private Long refreshTokenExpirationDuration;
+
+    public AuthenticationResponse create(User user, HttpServletResponse response) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         if (user.getRole() == null) {
             user.setRole(Role.USER);
@@ -41,13 +49,13 @@ public class UserService {
         var jwtRefreshToken = jwtService.generateRefreshToken(savedUser);
         saveToken(savedUser, jwtToken, TokenType.ACCESS);
         saveToken(savedUser, jwtRefreshToken, TokenType.REFRESH);
+        setRefreshTokenCookie(response, jwtRefreshToken);
         return AuthenticationResponse.builder()
                 .accessToken(jwtToken)
-                .refreshToken(jwtRefreshToken)
                 .build();
     }
 
-    public AuthenticationResponse authenticate(User user) {
+    public AuthenticationResponse authenticate(User user, HttpServletResponse response) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         user.getEmail(),
@@ -62,9 +70,9 @@ public class UserService {
         invalidateExistingTokens(foundUser, TokenType.REFRESH);
         saveToken(foundUser, jwtToken, TokenType.ACCESS);
         saveToken(foundUser, jwtRefreshToken, TokenType.REFRESH);
+        setRefreshTokenCookie(response, jwtRefreshToken);
         return AuthenticationResponse.builder()
                 .accessToken(jwtToken)
-                .refreshToken(jwtRefreshToken)
                 .build();
     }
 
@@ -92,12 +100,11 @@ public class UserService {
     }
 
     public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+        final String refreshToken = extractRefreshTokenFromCookie(request);
+        if (refreshToken == null) {
             response.sendError(HttpStatus.UNAUTHORIZED.value(), "Refresh token is missing");
             return;
         }
-        final String refreshToken = authHeader.substring(7);
         final String userEmail = jwtService.extractUserEmail(refreshToken);
         if (userEmail == null) {
             response.sendError(HttpStatus.UNAUTHORIZED.value(), "Invalid refresh token");
@@ -125,13 +132,38 @@ public class UserService {
 
         saveToken(user, newAccessToken, TokenType.ACCESS);
         saveToken(user, newRefreshToken, TokenType.REFRESH);
+        setRefreshTokenCookie(response, newRefreshToken);
 
         var authResponse = AuthenticationResponse.builder()
                 .accessToken(newAccessToken)
-                .refreshToken(newRefreshToken)
                 .build();
 
         response.setContentType("application/json");
         new ObjectMapper().writeValue(response.getOutputStream(), authResponse);
+    }
+
+    private String extractRefreshTokenFromCookie(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies == null) {
+            return null;
+        }
+
+        for (Cookie cookie : cookies) {
+            if (REFRESH_TOKEN_COOKIE_NAME.equals(cookie.getName())) {
+                return cookie.getValue();
+            }
+        }
+        return null;
+    }
+
+    private void setRefreshTokenCookie(HttpServletResponse response, String refreshToken) {
+        ResponseCookie cookie = ResponseCookie.from(REFRESH_TOKEN_COOKIE_NAME, refreshToken)
+                .httpOnly(true)
+                .secure(false)
+                .path("/api/auth")
+                .sameSite("Lax")
+                .maxAge(refreshTokenExpirationDuration / 1000)
+                .build();
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
     }
 }
