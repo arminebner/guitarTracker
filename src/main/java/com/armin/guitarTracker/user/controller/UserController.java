@@ -30,19 +30,19 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public AuthenticationResponse create(@RequestBody User user) {
+    public AuthenticationResponse create(@RequestBody User user, HttpServletResponse response) {
         System.out.println("Received register request for email: " + user.getEmail());
-        return service.create(user);
+        return service.create(user, response);
     }
 
     @PostMapping("/authenticate")
-    public ResponseEntity<?> authenticate(@RequestBody User user) {
+    public ResponseEntity<?> authenticate(@RequestBody User user, HttpServletResponse httpResponse) {
         System.out.println("========== AUTHENTICATE ENDPOINT REACHED ==========");
         System.out.println("Received authentication request for email: " + user.getEmail());
         System.out.println("User object: " + user);
         System.out.println("=============================================");
         try {
-            AuthenticationResponse response = service.authenticate(user);
+            AuthenticationResponse response = service.authenticate(user, httpResponse);
             System.out.println("Authentication successful");
             return ResponseEntity.ok(response);
         } catch (AuthenticationException e) {

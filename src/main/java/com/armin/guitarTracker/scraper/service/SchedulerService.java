@@ -13,7 +13,7 @@ public class SchedulerService {
 
     private final ScraperService scraperService;
 
-    @Scheduled(fixedRate = 60000) // Schedule to run every 60 seconds (adjust as needed)
+    @Scheduled(fixedRate = 60000 * 10) // Schedule to run every 10 minutes (adjust as needed)
     public void scheduleCrape() {
         List<PriceRecord> priceRecords = scraperService.scrapeAllProducts();
         // add additional logic here to process the scraped price records if needed
